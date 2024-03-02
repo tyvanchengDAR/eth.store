@@ -227,7 +227,6 @@ func uploadToBQ(jsonData string) {
 	if err := godotenv.Load(); err != nil {
         fmt.Println("Error loading .env file")
     }
-	
 	// Print new line delimited json in case of error
 	fmt.Println(jsonData)
 
@@ -261,7 +260,8 @@ func uploadToBQ(jsonData string) {
 		{Name: "withdrawalsSumGwei", Type: bigquery.BigNumericFieldType},
 		{Name: "consensusRewardsGwei", Type: bigquery.BigNumericFieldType},
 		{Name: "txFeesSumWei", Type: bigquery.BigNumericFieldType},
-		{Name: "totalRewardsWei", Type: bigquery.BigNumericFieldType},
+		// {Name: "totalRewardsWei", Type: bigquery.BigNumericFieldType},
+		{Name: "totalRewardsWei", Type: bigquery.FloatFieldType},
 	}
 
 	fmt.Println(source)

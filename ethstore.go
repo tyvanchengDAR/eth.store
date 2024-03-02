@@ -404,8 +404,28 @@ func Calculate(ctx context.Context, bnAddress, elAddress, dayStr string, concurr
 	validatorsMu := sync.Mutex{}
 
 	// get all deposits and txs of all active validators in the slot interval [startSlot,endSlot)
+	rateLimiter := time.Now()
+	waitTime := time.Second
+	rateLimiterCount := 0
+
 	for i := firstSlot; i < endSlot; i++ {
 		i := i
+		rateLimiterCount += 1
+		// Rate limit 33 calls per second
+		if rateLimiterCount % 30 == 0 {
+			
+			elapsedTime := time.Since(rateLimiter)
+			for elapsedTime > time.Second {
+				elapsedTime -= time.Second
+			}
+			remainingTime := waitTime - elapsedTime
+			fmt.Println("remainingTime: ", remainingTime)
+			if remainingTime > 0 {
+				time.Sleep(time.Second)
+			}
+			rateLimiter = time.Now()
+		}
+
 		if GetDebugLevel() > 0 && (endSlot-i)%1000 == 0 {
 			log.Printf("DEBUG eth.store: checking blocks for deposits and txs: %.0f%% (%v of %v-%v)\n", 100*float64(i-firstSlot)/float64(endSlot-firstSlot), i, firstSlot, endSlot)
 		}
