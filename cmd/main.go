@@ -260,8 +260,8 @@ func uploadToBQ(jsonData string) {
 		{Name: "withdrawalsSumGwei", Type: bigquery.BigNumericFieldType},
 		{Name: "consensusRewardsGwei", Type: bigquery.BigNumericFieldType},
 		{Name: "txFeesSumWei", Type: bigquery.BigNumericFieldType},
-		// {Name: "totalRewardsWei", Type: bigquery.BigNumericFieldType},
-		{Name: "totalRewardsWei", Type: bigquery.FloatFieldType},
+		{Name: "totalRewardsWei", Type: bigquery.BigNumericFieldType}, // For rewards database only
+		// {Name: "totalRewardsWei", Type: bigquery.FloatFieldType}, // For test database only
 	}
 
 	fmt.Println(source)

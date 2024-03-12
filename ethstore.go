@@ -307,7 +307,7 @@ func Calculate(ctx context.Context, bnAddress, elAddress, dayStr string, concurr
 	}
 	finalizedSlot := uint64(finalizedHeader.Data.Header.Message.Slot)
 	finalizedDay := finalizedSlot/slotsPerDay - 1
-	
+
 	var day uint64
 	if dayStr == "finalized" {
 		day = finalizedDay
@@ -330,9 +330,9 @@ func Calculate(ctx context.Context, bnAddress, elAddress, dayStr string, concurr
 	} else {
 		firstSlot = (day * slotsPerDay) - 3601
 	}
-	
-	endSlot := ((day + 1) * slotsPerDay) - 3601 // first slot not included in this eth.store-day
 
+	endSlot := ((day + 1) * slotsPerDay) - 3601 // first slot not included in this eth.store-day
+	
 	if endSlot > finalizedSlot {
 		endSlot = finalizedSlot
 	}
@@ -411,15 +411,18 @@ func Calculate(ctx context.Context, bnAddress, elAddress, dayStr string, concurr
 	for i := firstSlot; i < endSlot; i++ {
 		i := i
 		rateLimiterCount += 1
+		
 		// Rate limit 33 calls per second
-		if rateLimiterCount % 30 == 0 {
-			
+		if rateLimiterCount%25 == 0 {
+
 			elapsedTime := time.Since(rateLimiter)
 			for elapsedTime > time.Second {
 				elapsedTime -= time.Second
 			}
+			
 			remainingTime := waitTime - elapsedTime
-			fmt.Println("remainingTime: ", remainingTime)
+			// fmt.Println("remainingTime: ", remainingTime)
+			
 			if remainingTime > 0 {
 				time.Sleep(time.Second)
 			}
