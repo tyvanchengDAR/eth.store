@@ -405,7 +405,7 @@ func Calculate(ctx context.Context, bnAddress, elAddress, dayStr string, concurr
 
 	// get all deposits and txs of all active validators in the slot interval [startSlot,endSlot)
 	rateLimiter := time.Now()
-	waitTime := time.Second
+	// waitTime := time.Second
 	rateLimiterCount := 0
 
 	for i := firstSlot; i < endSlot; i++ {
@@ -413,20 +413,22 @@ func Calculate(ctx context.Context, bnAddress, elAddress, dayStr string, concurr
 		rateLimiterCount += 1
 		
 		// Rate limit 33 calls per second
-		if rateLimiterCount%25 == 0 {
+		// if rateLimiterCount%25 == 0 {
+		if rateLimiterCount + 10 > 28 {
 
 			elapsedTime := time.Since(rateLimiter)
 			for elapsedTime > time.Second {
 				elapsedTime -= time.Second
 			}
 			
-			remainingTime := waitTime - elapsedTime
+			// remainingTime := waitTime - elapsedTime
 			// fmt.Println("remainingTime: ", remainingTime)
 			
-			if remainingTime > 0 {
-				time.Sleep(time.Second)
-			}
+			// if remainingTime > 0 {
+			time.Sleep(time.Second)
+			// }
 			rateLimiter = time.Now()
+			rateLimiterCount = 0
 		}
 
 		if GetDebugLevel() > 0 && (endSlot-i)%1000 == 0 {
@@ -437,6 +439,7 @@ func Calculate(ctx context.Context, bnAddress, elAddress, dayStr string, concurr
 			var block *spec.VersionedSignedBeaconBlock
 			var err error
 			for j := 0; j < 10; j++ { // retry up to 10 times on failure
+				rateLimiterCount += 1
 				blockRes, err = client.SignedBeaconBlock(ctx, &api.SignedBeaconBlockOpts{Block: fmt.Sprintf("%d", i)})
 				if err == nil {
 					break
